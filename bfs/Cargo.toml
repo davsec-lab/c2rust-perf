@@ -1,0 +1,11 @@
+[package]
+name = "bfs"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "bfs"
+path = "src/bfs.rs"
+
+[dependencies]
+rand = "0.8" 

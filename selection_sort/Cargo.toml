@@ -1,0 +1,11 @@
+[package]
+name = "selection_sort_test"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "selection_sort"
+path = "src/selection_sort.rs"
+
+[dependencies]
+rand = "0.8" 
