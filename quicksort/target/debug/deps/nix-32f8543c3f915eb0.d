@@ -1,0 +1,13 @@
+/home/alexgao2/c_rust/quicksort/target/debug/deps/libnix-32f8543c3f915eb0.rmeta: /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/lib.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/macros.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/errno.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/fcntl.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/mod.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/signal.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/sysinfo.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/time.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/unistd.rs
+
+/home/alexgao2/c_rust/quicksort/target/debug/deps/nix-32f8543c3f915eb0.d: /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/lib.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/macros.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/errno.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/fcntl.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/mod.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/signal.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/sysinfo.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/time.rs /home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/unistd.rs
+
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/lib.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/macros.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/errno.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/fcntl.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/mod.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/signal.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/sysinfo.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/sys/time.rs:
+/home/alexgao2/.cargo/registry/src/index.crates.io-6f17d22bba15001f/nix-0.29.0/src/unistd.rs:
