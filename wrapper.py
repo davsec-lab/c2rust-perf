@@ -8,7 +8,6 @@ def run_benchmark(binary_path, input_size, iterations):
 
     for _ in range(iterations):
         try:
-            # Run the benchmark executable
             command = [binary_path, str(input_size)]
             result = subprocess.run(
                 command,
@@ -16,10 +15,9 @@ def run_benchmark(binary_path, input_size, iterations):
                 capture_output=True,
                 check=True
             )
-            # Parse the time taken from the benchmark output
             for line in result.stdout.splitlines():
                 if "Time taken" in line:
-                    time_taken = float(line.split()[-2])  # Extract the time value
+                    time_taken = float(line.split()[-2]) 
                     times.append(time_taken)
         except subprocess.CalledProcessError as e:
             print(f"Error running {binary_path}: {e.stderr}")
@@ -61,28 +59,23 @@ def main():
     )
     args = parser.parse_args()
 
-    # Define the directory structure for benchmarks
     available_benchmarks = ["binary_search", "selection_sort", "quicksort", "dfs", "bfs"]
 
-    # Determine which benchmarks to run
     if "all" in args.benchmarks:
         benchmarks_to_run = available_benchmarks
     else:
         benchmarks_to_run = [b for b in args.benchmarks if b in available_benchmarks]
 
-    # Parse input sizes
     size_mapping = parse_sizes(args.sizes, available_benchmarks)
 
-    # Run each benchmark
     for benchmark in benchmarks_to_run:
         print(f"Running benchmark: {benchmark}")
-        input_size = size_mapping.get(benchmark, 1000)  # Default input size if not specified
+        input_size = size_mapping.get(benchmark, 1000)
 
         # Paths to C and Rust binaries
-        c_binary = os.path.join(benchmark, f"{benchmark}_c")  # C binary
-        rust_binary = os.path.join(benchmark, "target", "release", benchmark)  # Rust binary
+        c_binary = os.path.join(benchmark, f"{benchmark}_c")  
+        rust_binary = os.path.join(benchmark, "target", "release", benchmark) 
 
-        # Run C benchmark
         if os.path.isfile(c_binary):
             c_times = run_benchmark(c_binary, input_size, args.iterations)
             c_avg_time = compute_average(c_times) if c_times else None
@@ -93,7 +86,6 @@ def main():
         else:
             print(f"C binary not found for benchmark: {benchmark}")
 
-        # Run Rust benchmark
         if os.path.isfile(rust_binary):
             rust_times = run_benchmark(rust_binary, input_size, args.iterations)
             rust_avg_time = compute_average(rust_times) if rust_times else None

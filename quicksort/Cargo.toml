@@ -7,6 +7,10 @@ edition = "2021"
 name = "quicksort"
 path = "src/quicksort.rs"
 
+[[bin]]
+name = "quicksort_perf"
+path = "src/quicksort_perf.rs"
+
 [dependencies]
 nix = { version = "0.29.0", features = ["signal", "process"] }
 rand = "0.8" 

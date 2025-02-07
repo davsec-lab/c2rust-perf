@@ -1,10 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
-#include <signal.h>
 
 void swap(int *a, int *b) {
     int temp = *a;
@@ -58,46 +54,13 @@ int main(int argc, char *argv[]) {
         arr[i] = rand();
     }
 
-    int pid = getpid();
-    int cpid = fork(); 
+    clock_t start_time = clock();
+    quickSort(arr, 0, size - 1);
+    clock_t end_time = clock();
 
+    double time_elapsed = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+    printf("\nTime taken to sort the array of size %d: %f seconds\n", size, time_elapsed);
 
-    if (cpid == 0) { 
-        char buf[300];
-        snprintf(buf, sizeof(buf), "perf stat -e cycles,instructions,cache-references,cache-misses -p %d > perf_output.log 2>&1", pid);
-        execl("/bin/sh", "sh", "-c", buf, NULL);
-        perror("execl failed");
-        exit(1);
-    } else { 
-        setpgid(cpid, 0); 
-        sleep(1);  
-
-        clock_t start_time = clock();
-        quickSort(arr, 0, size - 1);
-        clock_t end_time = clock();
-
-        kill(-cpid, SIGINT);
-        sleep(1); 
-
-        waitpid(cpid, NULL, 0);
-
-        FILE *perf_file = fopen("perf_output.log", "r");
-        if (perf_file) {
-            char line[256];
-            printf("\n[ Perf Stat Output ]\n");
-            while (fgets(line, sizeof(line), perf_file)) {
-                printf("%s", line);
-            }
-            fclose(perf_file);
-        } else {
-            perror("Failed to read perf stat log");
-        }
-
-        double time_elapsed = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-        printf("\nTime taken to sort the array of size %d: %f seconds\n", size, time_elapsed);
-
-        free(arr);
-    }
-
+    free(arr);
     return 0;
 }
