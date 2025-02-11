@@ -41,14 +41,18 @@ fn main() {
 
     let mut time_elapsed = 0.0;
     let mut rng = rand::thread_rng();
+    let mut total_dummy = 0;
+
+    let start_time = Instant::now();
     for _ in 0..size {
         let target = arr[rng.gen_range(0..size)];
-        let start_time = Instant::now();
         let dummy = binary_search(target, &mut arr);
-        let end_time = start_time.elapsed();
-        time_elapsed += end_time.as_secs_f64();
-        println!("{}", dummy);
+           total_dummy += dummy;
+        //println!("{}", dummy);
     }
+    let end_time = start_time.elapsed();
+    time_elapsed += end_time.as_secs_f64();
 
+    println!("{}", total_dummy);
     println!("Time taken to search array of size {}: {} seconds", size, time_elapsed);
 }

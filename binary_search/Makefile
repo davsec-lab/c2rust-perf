@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags
-CFLAGS = -Wall -O3
+CFLAGS = -Wall -O3 -ggdb
 
 # Source files
 SRC = binary_search.c

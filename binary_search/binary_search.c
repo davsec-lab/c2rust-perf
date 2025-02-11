@@ -45,16 +45,20 @@ int main(int argc, char *argv[]) {
 
 
     double time_elapsed = 0;
+    long total_dummy = 0;
 
     // Search every possible element in the array, get total time
+
+    start_time = clock();
     for (int i = 0; i < size; i++){
         int target = arr[rand() % size];
-        start_time = clock();
         int dummy = binarySearch(arr, 0, size - 1, target);
-        end_time = clock();
-        time_elapsed += ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
-        printf("%d\n", dummy);
+           total_dummy += dummy;
     }
+    end_time = clock();
+    time_elapsed += ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+
+    printf("Total dummy = %ld\n", total_dummy);
     
     /*
             int target = arr[rand() % size];
