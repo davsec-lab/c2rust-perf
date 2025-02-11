@@ -1,22 +1,22 @@
 use std::env;
 use std::time::Instant;
+use rand::Rng;
 
-pub fn binary_search(k: i32, items: &[i32]) -> i32 {
-    if items.is_empty() {
-        return -1;
+pub fn binary_search(k: i32, items: &mut Vec<i32>) -> i32 {
+
+    if items.len() == 0 {
+        return 0;
     }
 
+    let len_n: usize = items.len();
     let mut lo: isize = 0;
-    let mut hi: isize = items.len() as isize - 1;
-
+    let mut hi: isize = len_n as isize - 1;
     while lo <= hi {
         let mid = lo + (hi - lo) / 2;
-        let mid_val = items[mid as usize];
-
-        if mid_val == k {
+        if items[mid as usize] == k {
             return mid as i32;
         }
-        if mid_val > k {
+        if items[mid as usize] > k {
             hi = mid - 1;
         } else {
             lo = mid + 1;
@@ -37,15 +37,17 @@ fn main() {
         std::process::exit(1);
     });
 
-    let arr: Vec<i32> = (1..=size as i32).collect();
+    let mut arr: Vec<i32> = (1..=size as i32).collect();
 
     let mut time_elapsed = 0.0;
-
-    for &target in &arr {
+    let mut rng = rand::thread_rng();
+    for _ in 0..size {
+        let target = arr[rng.gen_range(0..size)];
         let start_time = Instant::now();
-        binary_search(target, &arr);
+        let dummy = binary_search(target, &mut arr);
         let end_time = start_time.elapsed();
         time_elapsed += end_time.as_secs_f64();
+        println!("{}", dummy);
     }
 
     println!("Time taken to search array of size {}: {} seconds", size, time_elapsed);

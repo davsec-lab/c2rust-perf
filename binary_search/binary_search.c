@@ -5,7 +5,6 @@
 int binarySearch(int arr[], int low, int high, int x) {
     while (low <= high) {
         int mid = low + (high - low) / 2;
-
         if (arr[mid] == x)
             return mid;
 
@@ -18,6 +17,8 @@ int binarySearch(int arr[], int low, int high, int x) {
 
     return -1;
 }
+
+
 
 
 int main(int argc, char *argv[]) {
@@ -47,12 +48,26 @@ int main(int argc, char *argv[]) {
 
     // Search every possible element in the array, get total time
     for (int i = 0; i < size; i++){
-        int target = arr[i];
+        int target = arr[rand() % size];
         start_time = clock();
-        binarySearch(arr, 0, size - 1, target);
+        int dummy = binarySearch(arr, 0, size - 1, target);
         end_time = clock();
         time_elapsed += ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+        printf("%d\n", dummy);
     }
+    
+    /*
+            int target = arr[rand() % size];
+        start_time = clock();
+        int dummy = binarySearch(arr, 0, size - 1, target);
+        end_time = clock();
+        time_elapsed += ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+        printf("%d\n", dummy);
+        */
+
+   
+
+    
 
     printf("Time taken to search array of size %d: %f seconds\n", size, time_elapsed);
 

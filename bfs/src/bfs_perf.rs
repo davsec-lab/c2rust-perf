@@ -89,6 +89,7 @@ fn main() {
             bfs(&adj_matrix, size, 0);
             let duration = start_time.elapsed();
 
+            // Stop `perf stat` immediately after sorting is done
             let _ = kill(Pid::from_raw(child_pid), Signal::SIGINT);
             let _ = waitpid(Pid::from_raw(child_pid), None);
 

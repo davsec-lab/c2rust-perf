@@ -96,9 +96,7 @@ int main(int argc, char* argv[]) {
         clock_t end_time = clock();
 
         kill(-cpid, SIGINT);
-        sleep(1); 
-
-        waitpid(cpid, NULL, 0);
+        waitpid(cpid, NULL, 0); 
 
         // Read and print perf output
         FILE *perf_file = fopen("bfs_c_perf_output.log", "r");

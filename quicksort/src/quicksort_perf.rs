@@ -6,6 +6,7 @@ use std::thread::sleep;
 use std::time::{Duration, Instant};
 use nix::unistd::{fork, ForkResult, Pid};
 use nix::sys::signal::{kill, Signal};
+use nix::sys::wait::waitpid;
 use rand::Rng;
 
 fn swap(arr: &mut [i32], a: usize, b: usize) {
@@ -52,11 +53,11 @@ fn main() {
     };
 
     let mut arr: Vec<i32> = (0..size).map(|_| rand::thread_rng().gen_range(0..10000)).collect();
-    
     let parent_pid = std::process::id();
 
     match unsafe { fork() } {
         Ok(ForkResult::Child) => {
+            // Start `perf stat` to monitor only quick_sort()
             let perf_command = format!(
                 "perf stat -e cycles,instructions,cache-references,cache-misses -p {} > quicksort_rs_perf_output.log 2>&1",
                 parent_pid
@@ -67,24 +68,23 @@ fn main() {
                 .arg(perf_command)
                 .spawn()
                 .expect("Failed to start perf stat");
-            
+
             exit(0);
         }
         Ok(ForkResult::Parent { child }) => {
             let child_pid = child.as_raw();
             
-            sleep(Duration::from_secs(1));
+            sleep(Duration::from_millis(500));  // Allow `perf stat` to start properly
 
             let start_time = Instant::now();
             quick_sort(&mut arr, 0, size - 1);
             let duration = start_time.elapsed();
 
-            use nix::sys::wait::waitpid;
-
+            // Stop `perf stat` immediately after sorting is done
             let _ = kill(Pid::from_raw(child_pid), Signal::SIGINT);
-            let _ = waitpid(Pid::from_raw(child_pid), None); 
-            
+            let _ = waitpid(Pid::from_raw(child_pid), None);
 
+            // Now read and print perf output (ensuring it doesn't interfere with timing)
             if let Ok(file) = File::open("quicksort_rs_perf_output.log") {
                 let reader = BufReader::new(file);
                 println!("\n[ Perf Stat Output ]");
@@ -97,6 +97,7 @@ fn main() {
                 eprintln!("Failed to read perf stat log");
             }
 
+            // Print sorting time
             println!(
                 "\nTime taken to sort the array of size {}: {:.6} seconds",
                 size,
