@@ -18,6 +18,11 @@ int binarySearch(int arr[], int low, int high, int x) {
     return -1;
 }
 
+double diff_timespec(struct timespec *time1, struct timespec *time0) {
+    return (time1->tv_sec - time0->tv_sec)
+        + (time1->tv_nsec - time0->tv_nsec) / 1000000000.0;
+}
+
 
 
 
@@ -33,7 +38,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    clock_t start_time, end_time;
+    struct timespec start_time, end_time;
     int *arr = (int *)malloc(size * sizeof(int));
 
     srand(time(NULL));
@@ -49,15 +54,15 @@ int main(int argc, char *argv[]) {
 
     // Search every possible element in the array, get total time
 
-    start_time = clock();
     for (int i = 0; i < size; i++){
         int target = arr[rand() % size];
-        int dummy = binarySearch(arr, 0, size - 1, target);
-           total_dummy += dummy;
-    }
-    end_time = clock();
-    time_elapsed += ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
 
+        clock_gettime(CLOCK_MONOTONIC, &start_time);
+        int dummy = binarySearch(arr, 0, size - 1, target);
+        total_dummy += dummy;
+        clock_gettime(CLOCK_MONOTONIC, &end_time);
+        time_elapsed += diff_timespec(&end_time, &start_time);
+    }
     printf("Total dummy = %ld\n", total_dummy);
     
     /*

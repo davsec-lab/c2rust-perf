@@ -1,6 +1,7 @@
 use std::env;
 use std::time::Instant;
 use rand::Rng;
+use nix::libc::{clock_gettime, timespec, CLOCK_MONOTONIC};
 
 pub fn binary_search(k: i32, items: &mut Vec<i32>) -> i32 {
 
@@ -25,6 +26,11 @@ pub fn binary_search(k: i32, items: &mut Vec<i32>) -> i32 {
     -1
 }
 
+fn diff_timespec(time1: &timespec, time0: &timespec) -> f64 {
+    (time1.tv_sec - time0.tv_sec) as f64 +
+        (time1.tv_nsec - time0.tv_nsec) as f64 / 1_000_000_000.0
+}
+
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() != 2 {
@@ -43,16 +49,27 @@ fn main() {
     let mut rng = rand::thread_rng();
     let mut total_dummy = 0;
 
-    let start_time = Instant::now();
     for _ in 0..size {
         let target = arr[rng.gen_range(0..size)];
+
+        let mut start_time: timespec = timespec { tv_sec: 0, tv_nsec: 0 };
+        unsafe {
+            clock_gettime(CLOCK_MONOTONIC, &mut start_time);
+        }
+
         let dummy = binary_search(target, &mut arr);
+        let mut end_time: timespec = timespec { tv_sec: 0, tv_nsec: 0 };
+        unsafe {
+            clock_gettime(CLOCK_MONOTONIC, &mut end_time);
+        }
+
+
+        time_elapsed += diff_timespec(&end_time, &start_time);
+
            total_dummy += dummy;
         //println!("{}", dummy);
     }
-    let end_time = start_time.elapsed();
-    time_elapsed += end_time.as_secs_f64();
-
+    
     println!("{}", total_dummy);
     println!("Time taken to search array of size {}: {} seconds", size, time_elapsed);
 }
