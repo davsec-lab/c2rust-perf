@@ -31,6 +31,11 @@ void quickSort(int arr[], int low, int high) {
     }
 }
 
+double diff_timespec(struct timespec *time1, struct timespec *time0) {
+    return (time1->tv_sec - time0->tv_sec)
+        + (time1->tv_nsec - time0->tv_nsec) / 1000000000.0;
+}
+
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         printf("Usage: %s <array_size>\n", argv[0]);
@@ -43,6 +48,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
+    struct timespec start_time, end_time;
     int *arr = (int *)malloc(size * sizeof(int));
     if (!arr) {
         printf("Error: Memory allocation failed.\n");
@@ -54,11 +60,11 @@ int main(int argc, char *argv[]) {
         arr[i] = rand();
     }
 
-    clock_t start_time = clock();
+    clock_gettime(CLOCK_MONOTONIC, &start_time);
     quickSort(arr, 0, size - 1);
-    clock_t end_time = clock();
+    clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    double time_elapsed = ((double)(end_time - start_time)) / CLOCKS_PER_SEC;
+    time_elapsed += diff_timespec(&end_time, &start_time);
     printf("\nTime taken to sort the array of size %d: %f seconds\n", size, time_elapsed);
 
     free(arr);
