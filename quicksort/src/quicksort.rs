@@ -61,12 +61,18 @@ fn main() {
 
     unsafe { srand(10000); }
 
-    let mut arr: Vec<i32> = Vec::new();
+//    let mut arr: Vec<i32> = Vec::new();
+    let mut arr: Vec<i32>; 
+    unsafe {
+        arr = (0..size).map(|_| rand()).collect();
+    }
+    /*
     unsafe {
         for i in 0..size {
             arr.push(rand());
         }
     }
+    */
 
     let mut time_elapsed = 0.0;
     let mut start_time: timespec = timespec { tv_sec: 0, tv_nsec: 0 };
