@@ -1,1 +1,1 @@
-/home/alexgao2/c_rust/quicksort/target/release/quicksort: /home/alexgao2/c_rust/quicksort/src/quicksort.rs
+/home/tpalit/c2rust-perf/quicksort/target/release/quicksort: /home/tpalit/c2rust-perf/quicksort/src/quicksort.rs

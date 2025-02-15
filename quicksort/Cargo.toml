@@ -7,11 +7,14 @@ edition = "2021"
 name = "quicksort"
 path = "src/quicksort.rs"
 
-[[bin]]
-name = "quicksort_perf"
-path = "src/quicksort_perf.rs"
+#[[bin]]
+#name = "quicksort_perf"
+#path = "src/quicksort_perf.rs"
 
 [dependencies]
-nix = { version = "0.29.0", features = ["signal", "process"] }
+# nix = { version = "0.29.0", features = ["signal", "process"] }
 rand = "0.8" 
+libc = "0.2"
 
+[build]
+rustflags = ["-C", "llvm-args=-disable-sroa"]

@@ -23,7 +23,10 @@ int partition(int arr[], int low, int high) {
     return i;
 }
 
+int count = 0;
+
 void quickSort(int arr[], int low, int high) {
+    count++;
     if (low < high) {
         int pi = partition(arr, low, high);
         quickSort(arr, low, pi - 1);
@@ -55,7 +58,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    srand(time(NULL));
+    srand(10000);
     for (int i = 0; i < size; i++) {
         arr[i] = rand();
     }
@@ -64,8 +67,8 @@ int main(int argc, char *argv[]) {
     quickSort(arr, 0, size - 1);
     clock_gettime(CLOCK_MONOTONIC, &end_time);
 
-    time_elapsed += diff_timespec(&end_time, &start_time);
-    printf("\nTime taken to sort the array of size %d: %f seconds\n", size, time_elapsed);
+    double time_elapsed = diff_timespec(&end_time, &start_time);
+    printf("\nTime taken to sort the array of size %d: %f seconds, %d recursive calls\n", size, time_elapsed, count);
 
     free(arr);
     return 0;
