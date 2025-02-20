@@ -2,11 +2,13 @@ use std::env;
 use std::process::exit;
 use std::time::Instant;
 use rand::Rng;
-use nix::libc::{clock_gettime, timespec, CLOCK_MONOTONIC};
+use libc::{clock_gettime, timespec, CLOCK_MONOTONIC, srand, rand};
 
 fn swap(arr: &mut [i32], a: usize, b: usize) {
     arr.swap(a, b);
 }
+
+static mut count:i64 = 0;
 
 fn partition(arr: &mut [i32], low: usize, high: usize) -> usize {
     let pivot = arr[high];
@@ -29,6 +31,9 @@ fn diff_timespec(time1: &timespec, time0: &timespec) -> f64 {
 }
 
 fn quick_sort(arr: &mut [i32], low: usize, high: usize) {
+    unsafe {
+        count+=1;
+    }
     if low < high {
         let pi = partition(arr, low, high);
         if pi > 0 {
@@ -54,7 +59,20 @@ fn main() {
         }
     };
 
-    let mut arr: Vec<i32> = (0..size).map(|_| rand::thread_rng().gen_range(0..10000)).collect();
+    unsafe { srand(10000); }
+
+//    let mut arr: Vec<i32> = Vec::new();
+    let mut arr: Vec<i32>; 
+    unsafe {
+        arr = (0..size).map(|_| rand()).collect();
+    }
+    /*
+    unsafe {
+        for i in 0..size {
+            arr.push(rand());
+        }
+    }
+    */
 
     let mut time_elapsed = 0.0;
     let mut start_time: timespec = timespec { tv_sec: 0, tv_nsec: 0 };
@@ -71,9 +89,12 @@ fn main() {
 
     time_elapsed += diff_timespec(&end_time, &start_time);
 
+    unsafe {
     println!(
-        "\nTime taken to sort the array of size {}: {:.6} seconds",
+        "\nTime taken to sort the array of size {}: {:.6} seconds, with {} iterations",
         size,
-        duration.as_secs_f64()
+        time_elapsed,
+        count
     );
+    }
 }
