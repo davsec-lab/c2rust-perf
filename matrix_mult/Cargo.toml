@@ -1,0 +1,12 @@
+[package]
+name = "quicksort"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "matrix_mult"
+path = "src/matrix_mult.rs"
+
+[dependencies]
+rand = "0.8" 
+libc = "0.2"

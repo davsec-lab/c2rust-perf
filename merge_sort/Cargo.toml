@@ -1,0 +1,15 @@
+[package]
+name = "merge_sort"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+rand = "0.8" 
+libc = "0.2"
+
+[[bin]]
+name = "merge_sort"
+path = "src/merge_sort.rs"
+
+[build]
+rustflags = ["-C", "llvm-args=-disable-sroa"]
