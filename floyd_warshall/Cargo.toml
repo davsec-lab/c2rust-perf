@@ -1,0 +1,13 @@
+[package]
+name = "floyd-warshall"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "floyd_warshall"
+path = "src/floyd_warshall.rs"
+
+[dependencies]
+libc = "0.2"
+rand = "0.8"
+
