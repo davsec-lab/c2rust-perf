@@ -7,13 +7,14 @@ edition = "2021"
 name = "dfs"
 path = "src/dfs.rs"
 
-[[bin]]
-name = "dfs_perf"
-path = "src/dfs_perf.rs"
+#[[bin]]
+#name = "dfs_perf"
+#path = "src/dfs_perf.rs"
 
 [dependencies]
-nix = { version = "0.29.0", features = ["signal", "process"] }
-
+# nix = { version = "0.29.0", features = ["signal", "process"] }
 rand = "0.8" 
+libc = "=0.2.126"
+perf-event-open-sys = "=4.0.0"
 
 

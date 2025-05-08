@@ -7,10 +7,12 @@ edition = "2021"
 name = "selection_sort"
 path = "src/selection_sort.rs"
 
-[[bin]]
-name = "selection_sort_perf"
-path = "src/selection_sort_perf.rs"
+#[[bin]]
+#name = "selection_sort_perf"
+#path = "src/selection_sort_perf.rs"
 
 [dependencies]
-nix = { version = "0.29.0", features = ["signal", "process"] }
+#nix = { version = "0.29.0", features = ["signal", "process"] }
 rand = "0.8" 
+libc = "=0.2.126"
+perf-event-open-sys = "=4.0.0"

@@ -1,100 +1,171 @@
 import subprocess
 import os
 import argparse
+import re
+from collections import defaultdict
 
-def run_benchmark(binary_path, input_size, iterations):
-    """Run a single benchmark multiple times and collect execution times."""
-    times = []
+CUSTOM_RUSTC_PATH = "/home/agao/rust/build/x86_64-unknown-linux-gnu/stage2/bin/rustc"
+VANILLA_CARGO_PATH = "/home/agao/rust-vanilla-install/usr/local/bin/cargo"
 
+def run_command(command, env=None):
+    """Run a command and return its stdout."""
+    try:
+        result = subprocess.run(
+            command, text=True, capture_output=True, check=True, env=env
+        )
+        return result.stdout
+    except subprocess.CalledProcessError as e:
+        print(f"❌ Error: {e.stderr}")
+        return None
+
+def extract_metrics(output):
+    metrics = {}
+    patterns = {
+        "CPU cycles": r"CPU cycles:\s+(\d+)",
+        "Instructions retired": r"Instructions retired:\s+(\d+)",
+        "L1 DCache read misses": r"L1 DCache read misses:\s+(\d+)",
+        "Last level DCache read misses": r"L2 DCache read misses:\s+(\d+)",
+        "Branch misses": r"Branch misses:\s+(\d+)",
+        "IPC": r"IPC.*?:\s+([0-9.]+)",
+        "Time": r"Time taken.*?:\s+([0-9.]+)\s+seconds",
+    }
+    for name, pattern in patterns.items():
+        match = re.search(pattern, output)
+        if match:
+            metrics[name] = float(match.group(1))
+    return metrics
+
+def run_multiple(command, iterations, env=None):
+    aggregated = defaultdict(list)
     for _ in range(iterations):
-        try:
-            command = [binary_path, str(input_size)]
-            result = subprocess.run(
-                command,
-                text=True,
-                capture_output=True,
-                check=True
-            )
-            for line in result.stdout.splitlines():
-                if "Time taken" in line:
-                    time_taken = float(line.split()[-2]) 
-                    times.append(time_taken)
-        except subprocess.CalledProcessError as e:
-            print(f"Error running {binary_path}: {e.stderr}")
+        output = run_command(command, env)
+        if output is None:
             return None
-    return times
+        stats = extract_metrics(output)
+        for key, value in stats.items():
+            aggregated[key].append(value)
 
-def compute_average(values):
-    """Compute the average of a list of values."""
-    return sum(values) / len(values) if values else 0
+    averaged = {
+        key: sum(values) / len(values)
+        for key, values in aggregated.items()
+        if values
+    }
+    return averaged
 
 def parse_sizes(size_args, available_benchmarks):
-    """Parse size arguments into a dictionary mapping benchmarks to sizes."""
     size_dict = {}
     for size_arg in size_args:
-        benchmark, size = size_arg.split(':')
-        if benchmark in available_benchmarks:
-            size_dict[benchmark] = int(size)
+        try:
+            benchmark, size = size_arg.split(":")
+            if benchmark in available_benchmarks:
+                size_dict[benchmark] = int(size)
+        except ValueError:
+            print(f"Ignoring invalid size argument: {size_arg}")
     return size_dict
 
+def print_metrics(title, metrics):
+    print(f"{title} Metrics:")
+    for k, v in metrics.items():
+        if k == "IPC":
+            print(f"  {k}: {v:.2f}")
+        elif k == "Time":
+            print(f"  {k}: {v:.6f} seconds")
+        else:
+            print(f"  {k}: {int(v)}")
+
 def main():
-    parser = argparse.ArgumentParser(description="Benchmark wrapper for Rust and C implementations.")
+    parser = argparse.ArgumentParser(
+        description="Benchmark wrapper for Rust and C implementations."
+    )
     parser.add_argument(
         "--benchmarks",
         nargs="+",
-        help="List of benchmarks to run (e.g., 'binary_search quicksort selection_sort'). Use 'all' to run all benchmarks.",
         required=True,
+        help="Benchmarks to run (e.g., 'binary_search quicksort'). Use 'all' to run all benchmarks.",
     )
     parser.add_argument(
         "--sizes",
         nargs="+",
-        help="Specify input sizes for each benchmark in the format 'benchmark:size' (e.g., 'quicksort:1000 dfs:5000').",
         required=True,
+        help="Input sizes per benchmark in format 'benchmark:size' (e.g., 'dfs:5000 quicksort:10000').",
     )
     parser.add_argument(
         "--iterations",
         type=int,
-        help="Number of times each benchmark should be run.",
         default=1,
+        help="Number of iterations to run each benchmark.",
     )
     args = parser.parse_args()
 
-    available_benchmarks = ["binary_search", "selection_sort", "quicksort", "dfs", "bfs"]
+    available_benchmarks = [
+        "binary_search",
+        "dfs",
+        "floyd_warshall",
+        "matrix_mult",
+        "merge_sort",
+        "quicksort",
+        "selection_sort",
+        "threesum",
+    ]
 
-    if "all" in args.benchmarks:
-        benchmarks_to_run = available_benchmarks
-    else:
-        benchmarks_to_run = [b for b in args.benchmarks if b in available_benchmarks]
+    benchmarks_to_run = (
+        available_benchmarks
+        if "all" in args.benchmarks
+        else [b for b in args.benchmarks if b in available_benchmarks]
+    )
 
     size_mapping = parse_sizes(args.sizes, available_benchmarks)
 
     for benchmark in benchmarks_to_run:
-        print(f"Running benchmark: {benchmark}")
+        print(f"\n Running benchmark: {benchmark}")
         input_size = size_mapping.get(benchmark, 1000)
 
-        # Paths to C and Rust binaries
-        c_binary = os.path.join(benchmark, f"{benchmark}_c")  
-        rust_binary = os.path.join(benchmark, "target", "release", benchmark) 
+        c_binary = os.path.join(benchmark, f"{benchmark}_c")
+        rust_path = os.path.join(benchmark)
 
+        # Run C binary
         if os.path.isfile(c_binary):
-            c_times = run_benchmark(c_binary, input_size, args.iterations)
-            c_avg_time = compute_average(c_times) if c_times else None
-            if c_avg_time:
-                print(f"C Benchmark Average Time: {c_avg_time:.6f} seconds")
+            c_metrics = run_multiple([c_binary, str(input_size)], args.iterations)
+            if c_metrics:
+                print_metrics("C", c_metrics)
             else:
-                print("C Benchmark Failed")
+                print(" C Benchmark Failed")
         else:
-            print(f"C binary not found for benchmark: {benchmark}")
+            print(f" C binary not found: {c_binary}")
 
-        if os.path.isfile(rust_binary):
-            rust_times = run_benchmark(rust_binary, input_size, args.iterations)
-            rust_avg_time = compute_average(rust_times) if rust_times else None
-            if rust_avg_time:
-                print(f"Rust Benchmark Average Time: {rust_avg_time:.6f} seconds")
+        # Run Rust (system Cargo)
+        if os.path.isdir(rust_path):
+            rust_cmd = [
+                "cargo",
+                "run",
+                "--release",
+                "--quiet",
+                "--bin",
+                benchmark,
+                "--manifest-path",
+                os.path.join(rust_path, "Cargo.toml"),
+                "--",
+                str(input_size),
+            ]
+            rust_sys_metrics = run_multiple(rust_cmd, args.iterations)
+            if rust_sys_metrics:
+                print_metrics("Rust (vanilla)", rust_sys_metrics)
             else:
-                print("Rust Benchmark Failed")
+                print("Rust (system) Benchmark Failed")
         else:
-            print(f"Rust binary not found for benchmark: {benchmark}")
+            print(f" Rust path not found: {rust_path}")
+
+        # Run Rust (custom rustc)
+        if os.path.isfile(CUSTOM_RUSTC_PATH):
+            env = os.environ.copy()
+            env["RUSTC"] = CUSTOM_RUSTC_PATH
+            rust_custom_metrics = run_multiple(rust_cmd, args.iterations, env=env)
+            if rust_custom_metrics:
+                print_metrics("Rust (custom rustc)", rust_custom_metrics)
+            else:
+                print(" Rust (custom rustc) Benchmark Failed")
+        else:
+            print(f" Custom rustc not found at {CUSTOM_RUSTC_PATH}")
 
 if __name__ == "__main__":
     main()

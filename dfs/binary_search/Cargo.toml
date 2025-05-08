@@ -1,0 +1,13 @@
+[package]
+name = "binary_search"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "binary_search"
+path = "src/binary_search.rs"
+
+[dependencies]
+rand = "0.8" 
+libc = "=0.2.126"
+perf-event-open-sys = "=4.0.0"

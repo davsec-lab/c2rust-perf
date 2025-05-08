@@ -6,11 +6,9 @@ CFLAGS = -Wall -O3
 
 # Source files
 SRC = quicksort.c
-SRC_PERF = quicksort_perf.c
 
 # Output binaries
 OUT = quicksort_c
-OUT_PERF = quicksort_perf_c
 
 # Rule to build both binaries
 all: $(OUT) $(OUT_PERF)
