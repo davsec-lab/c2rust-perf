@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
     struct timespec start_time, end_time;
     int *arr = (int *)malloc(size * sizeof(int));
 
-    = for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++)
     {
         arr[i] = i + 1;
     }
