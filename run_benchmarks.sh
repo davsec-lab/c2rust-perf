@@ -5,8 +5,8 @@ NUM_RUNS=${1:-1}
 INPUT_SIZES=(100000000 200000 2000 80000000 20000000 30000)
 DIRS=(quicksort selection_sort matrix_mult merge_sort binary_search dfs)
 
-CUSTOM_RUSTC="$HOME/c_to_rust/rust-modified/build/x86_64-unknown-linux-gnu/stage2/bin/rustc"
-VANILLA_CARGO="$HOME/c_to_rust/rust-vanilla-install/usr/local/bin/cargo"
+CUSTOM_RUSTC="$HOME/c_to_rust/rust-modified-install/usr/local/bin/rustc"
+VANILLA_RUSTC="$HOME/c_to_rust/rust-vanilla-install/usr/local/bin/rustc"
 
 for i in "${!DIRS[@]}"; do
     dir="${DIRS[i]}"
@@ -21,13 +21,15 @@ for i in "${!DIRS[@]}"; do
 
         echo "Rust Vanilla $dir"
         cd $dir
-        $VANILLA_CARGO run --release $size
+        cargo clean
+        RUSTC=$VANILLA_RUSTC cargo run --release -- $size
         cd ..
         echo
 
         echo "Rust Custom $dir"
         cd $dir
-        RUSTC=$CUSTOM_RUSTC cargo run --release $size
+        cargo clean
+        RUSTC=$CUSTOM_RUSTC cargo run --release -- $size
         cd ..
         echo
     done
