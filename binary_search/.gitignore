@@ -1,1 +1,4 @@
 /target
+objdump.text
+inscount.out
+binary_search_c
